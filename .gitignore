@@ -1,0 +1,6 @@
+.venv
+*.ipynb
+history_chat
+__pycache__
+.env
+*.json
