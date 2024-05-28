@@ -9,8 +9,8 @@ import os
 current_directory = os.path.dirname(os.path.realpath(__file__))
 parent_directory = os.path.dirname(current_directory)
 sys.path.append(parent_directory)
-bot_avt = "https://ninjavanvn.zendesk.com/hc/article_attachments/360010503472/Home-Deliveries.png"
-user_avt = "https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortFlat&accessoriesType=Prescription01&hairColor=Auburn&facialHairType=BeardLight&facialHairColor=Black&clotheType=Hoodie&clotheColor=PastelBlue&eyeType=Squint&eyebrowType=DefaultNatural&mouthType=Smile&skinColor=Tanned"
+bot_avt = "https://th.bing.com/th/id/R.dec45b829bcadab7124de8e1a5df2263?rik=eoFrojBvo%2f3heg&pid=ImgRaw&r=0"
+user_avt = "https://ps.w.org/user-avatar-reloaded/assets/icon-128x128.png?rev=2540745"
 font_size = 14
 avt_size = 100
 

@@ -1,8 +1,8 @@
 import os
 import warnings
 import streamlit as st
-from src.base.llm_model import get_llm_model
-from src.rag.main import build_rag_chain, InputQA, OutputQA, Chatbot_SOP
+from ChatbotFIT.src.base.llm_model import get_llm_model
+from ChatbotFIT.src.rag.main import build_rag_chain, InputQA, OutputQA
 from uuid import uuid4
 from langchain_core.messages import AIMessage, HumanMessage
 import asyncio
@@ -10,13 +10,15 @@ from utils import StreamlitUICallbackHandler, message_func, message_func_stream
 import time
 warnings.filterwarnings("ignore")
 
-llm = get_llm_model(model_type="Gemini")
+model_type = "GPT"
+llm = get_llm_model(model_type=model_type)
 data_dir = "./data/"
 
-chatbot = Chatbot_SOP(llm=llm,data_dir=data_dir,data_type="pdf")
+chain = build_rag_chain(llm=llm,data_dir=data_dir,data_type="pdf",model_type=model_type)
+chat_bot= chain.get_chain()
 
-st.title("NinjaSOP - ChatBot Hỏi đáp SOP")
-st.caption("ChatBot demo của NinjaSOP - Hệ thống hỏi đáp SOP của NinjaVan")
+st.title("FIT_Chatbot")
+st.caption("ChatBot Khoa Công Nghệ thông tin - Hệ thống hỏi đáp IUH")
 
 INITIAL_MESSAGE = [
     {
@@ -69,7 +71,7 @@ if st.sidebar.button("Reset Chat"):
 #             },)
 
 if "messages" not in st.session_state.keys():
-    st.session_state["messages"] = INITIAL_MESSAGE
+    st.session_state["messages"] = INITIAL_MESSAGE  
 
 if "history" not in st.session_state:
     st.session_state["history"] = []
@@ -111,7 +113,7 @@ def get_response(question,session_id:str):
     placeholder_text = st.empty()
     source = ""
     output = {}
-    for chunk in chatbot.rag_chain.stream({"input": question},
+    for chunk in chat_bot.stream({"input": question},
                                                 config={"configurable": {"session_id": session_id}
                                             }):
         for key in chunk:

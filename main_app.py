@@ -1,23 +1,26 @@
 import os
+import multiprocessing
+
 os.environ["TOKENNIZERS_PARALLELISM"] = "false"
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from uuid import uuid4
 from langserve import add_routes
 
-from ChatbotNinja.src.base.llm_model import get_llm_model
-from ChatbotNinja.src.rag.main import build_rag_chain, InputQA, OutputQA,History_chat
+from ChatbotFIT.src.base.llm_model import get_llm_model
+from ChatbotFIT.src.rag.main import build_rag_chain, InputQA, OutputQA,History_chat
 
-llm = get_llm_model(model_type="Gemini")
+model_type = "Gemini"
+llm = get_llm_model(model_type=model_type)
 data_dir = "./data/"
-chatbot = build_rag_chain(llm=llm,data_dir=data_dir,data_type="pdf")
+chatbot = build_rag_chain(llm=llm,data_dir=data_dir,data_type="pdf",model_type=model_type)
 chat_model = chatbot.get_chain()
 
 
 app = FastAPI(
-    title="Chatbot SOP",
+    title="Chatbot FIT",
     version="1.0",
-    description="API for Chatbot SOP",
+    description="API for Chatbot FIT",
 )
 
 app.add_middleware(
@@ -29,7 +32,7 @@ app.add_middleware(
 )
 @app.get("/")
 def router():
-    return {"message": "API from NinjaSOP"}
+    return {"message": "API from FIT_IUH"}
 
 @app.get("/check")
 async def check():
@@ -55,4 +58,6 @@ add_routes(app,chat_model, playground_type="default",path="/chat")
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5000,reload=True)
+    multiprocessing.freeze_support()
+
+    uvicorn.run("main_app:app", host="0.0.0.0", port=5000,reload=True)

@@ -13,18 +13,23 @@ class VectorDb:
                  documents = None,
                  vector_db : Union[FAISS] = FAISS,
                  )->None:
+        self.vector_db = vector_db
         if model_type == "GPT":
             self.embeddings = OpenAIEmbeddings()
+            if os.path.exists("index_FIT_GPT"):
+             self.db = self.vector_db.load_local("index_FIT_GPT", embeddings=self.embeddings,allow_dangerous_deserialization=True)
+            else:
+                self.db = self.create_vector_db(documents)
+                self.db.save_local("index_FIT_GPT")
         elif model_type == "Gemini":
             self.embeddings = VertexAIEmbeddings(model_name='textembedding-gecko@latest')
+            if os.path.exists("index_FIT_gemini"):
+             self.db = self.vector_db.load_local("index_FIT_gemini", embeddings=self.embeddings,allow_dangerous_deserialization=True)
+            else:
+                self.db = self.create_vector_db(documents)
+                self.db.save_local("index_FIT_gemini")
         else:
             self.embeddings = HuggingFaceEmbeddings() 
-        self.vector_db = vector_db
-        if os.path.exists("index_ninja"):
-            self.db = self.vector_db.load_local("index_ninja", embeddings=self.embeddings,allow_dangerous_deserialization=True)
-        else:
-            self.db = self.create_vector_db(documents)
-            self.db.save_local("index_ninja")
 
     def create_vector_db(self, documents):
         db = self.vector_db.from_documents(documents,
