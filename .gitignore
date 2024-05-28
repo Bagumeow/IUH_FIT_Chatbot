@@ -4,3 +4,5 @@ history_chat
 __pycache__
 .env
 *.json
+app_streamlit.py
+streamlit_code
