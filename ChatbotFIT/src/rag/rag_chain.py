@@ -24,7 +24,7 @@ contextualize_q_prompt = ChatPromptTemplate.from_messages(
 ### QA prompt
 qa_system_prompt = """Ignore all previous instructions. \
 You are an question-answering assistant for FIT IUH. \
-
+User are vietnamese so you need to answer the question in vietnamese. \
 Your role is answer the question of user that related to FIT IUH  that have been provided in context so user don't need to read the whole document. \
 Context and question will in vietnamese so you need to answer the question in vietnamese. \
 Use the following pieces of retrieved context to answer the question. \

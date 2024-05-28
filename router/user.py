@@ -1,5 +1,5 @@
-# from tools.tools import *
-from tools import *
+from tools.tools import *
+# from tools import *
 from fastapi import FastAPI, Depends, HTTPException, status, APIRouter
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from datetime import datetime, timedelta, timezone
@@ -40,11 +40,27 @@ async def register(user : UserCreate):
         "status": bool(result)
     }
 
+class Login(BaseModel):
+    email: str
+    password: str
+
+@router.post("/login")
+async def login_for_access_token(from_data : Login):
+    conn=create_connection()
+    user = authenticate_user(conn, from_data.email, from_data.password)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password", headers={"WWW-Authenticate": "Bearer"}
+        )
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+    conn.close()
+    return {"access_token": access_token, "token_type": "bearer"}
 
 
-
-if __name__ == "__main__":
-    import uvicorn
-    app = FastAPI()
-    app.include_router(router)
-    uvicorn.run(app, host="0.0.0.0", port=5000)
+# if __name__ == "__main__":
+#     import uvicorn
+#     app = FastAPI()
+#     app.include_router(router)
+#     uvicorn.run(app, host="0.0.0.0", port=5000)

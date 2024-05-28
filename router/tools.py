@@ -109,6 +109,15 @@ def check_dupliate_username_or_email(conn, email:str, user_name:str):
         return True
     else:
         return False
+def check_session_id(conn, session_id:str):
+    cursor = create_cursor(conn)
+    cursor.execute("ROLLBACK")
+    cursor.execute(f"SELECT * FROM history_chat WHERE session_id = '{session_id}'")
+    result = cursor.fetchone()
+    if result:
+        return True
+    else:
+        return False
     
 def authenticate_user(conn, email: str, password: str):
     _,user = get_user(conn, email)
