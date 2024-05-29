@@ -1,5 +1,6 @@
-#can create GPT or Hugging face model
+# can create GPT or Hugging face model
 import torch
+
 # from transformers import BitsAndBytesConfig, AutoTokenizer, AutoModelForCausalLM, pipeline
 # from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
 from langchain_google_vertexai import VertexAI
@@ -16,13 +17,15 @@ dotenv.load_dotenv()
 #     bnb_4bit_compute_dtype=torch.bfloat16,
 # )
 
-def get_llm_model(model_type: str ="Gemini", max_new_tokens = 1024,
-                  **kwargs):
+
+def get_llm_model(model_type: str = "Gemini", max_new_tokens=1024, **kwargs):
     if model_type == "GPT":
-        llm = ChatOpenAI(temperature=0.9, model_kwargs={"top_p":0.95}, max_tokens=max_new_tokens)
+        llm = ChatOpenAI(
+            temperature=0.9, model_kwargs={"top_p": 0.95}, max_tokens=max_new_tokens
+        )
         return llm
     elif model_type == "Gemini":
-        llm = VertexAI(model_name="gemini-1.0-pro-002",streaming=True)
+        llm = VertexAI(model_name="gemini-1.0-pro-002", streaming=True)
         return llm
 
     # elif model_type == "Mistral":

@@ -16,21 +16,34 @@ import json
 import dotenv
 
 dotenv.load_dotenv()
+
+
 class InputQA(BaseModel):
-    question : str = Field(..., title="Question to ask", description="The question to ask the model")
-    session_id : str = Field(..., title="Session ID", description="The session ID for the chat")
+    question: str = Field(
+        ..., title="Question to ask", description="The question to ask the model"
+    )
+    session_id: str = Field(
+        ..., title="Session ID", description="The session ID for the chat"
+    )
+
 
 class OutputQA(BaseModel):
-    answer : str = Field(..., title="Answer to the question", description="The answer to the question")
+    answer: str = Field(
+        ..., title="Answer to the question", description="The answer to the question"
+    )
+
 
 class History_chat(BaseModel):
-    session_id : str = Field(..., title="Session ID", description="The session ID for the chat")
+    session_id: str = Field(
+        ..., title="Session ID", description="The session ID for the chat"
+    )
 
-def build_rag_chain(llm,data_dir,data_type,model_type="Gemini"):
+
+def build_rag_chain(llm, data_dir, data_type, model_type="Gemini"):
     documents = Loader(file_type=data_type).load_dir(data_dir)
 
-    retriever = VectorDb(model_type=model_type,documents=documents).get_retrieval()
-    rag_chain = RAGChain(llm=llm,retriever=retriever)
+    retriever = VectorDb(model_type=model_type, documents=documents).get_retrieval()
+    rag_chain = RAGChain(llm=llm, retriever=retriever)
     return rag_chain
 
 

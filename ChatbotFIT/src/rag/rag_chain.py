@@ -6,7 +6,7 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 import dotenv
 import json
-import os 
+import os
 
 dotenv.load_dotenv()
 ### history prompt
@@ -42,35 +42,46 @@ qa_prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
+
 class RAGChain:
-    def __init__(self, llm, retriever, contextualize_q_prompt=contextualize_q_prompt ,qa_prompt=qa_prompt):
+    def __init__(
+        self,
+        llm,
+        retriever,
+        contextualize_q_prompt=contextualize_q_prompt,
+        qa_prompt=qa_prompt,
+    ):
         self.llm = llm
         self.retriever = retriever
         self.history_aware_retriever = create_history_aware_retriever(
-                                        self.llm, self.retriever, contextualize_q_prompt)
+            self.llm, self.retriever, contextualize_q_prompt
+        )
         self.question_answer_chain = create_stuff_documents_chain(self.llm, qa_prompt)
         self.store = {}
 
-    def get_session_history(self,session_id: str) -> BaseChatMessageHistory:
+    def get_session_history(self, session_id: str) -> BaseChatMessageHistory:
         if session_id not in self.store:
             self.store[session_id] = ChatMessageHistory()
         return self.store[session_id]
-    
+
     def get_chain(self):
-        ninja_chain = create_retrieval_chain(self.history_aware_retriever, self.question_answer_chain)
+        ninja_chain = create_retrieval_chain(
+            self.history_aware_retriever, self.question_answer_chain
+        )
         conversational_rag_chain = RunnableWithMessageHistory(
-                                    ninja_chain,
-                                    self.get_session_history,
-                                    input_messages_key="input",
-                                    history_messages_key="chat_history",
-                                    output_messages_key="answer")
-        return conversational_rag_chain 
-    
-    def save_session_history(self,session_id: str):
+            ninja_chain,
+            self.get_session_history,
+            input_messages_key="input",
+            history_messages_key="chat_history",
+            output_messages_key="answer",
+        )
+        return conversational_rag_chain
+
+    def save_session_history(self, session_id: str):
         if not os.path.exists("history_chat"):
             os.makedirs("history_chat")
-        store =  {session_id: str(self.get_session_history(session_id).messages)}
-        with open(f"history_chat/{session_id}.json", "w",encoding="utf-8") as history:
+        store = {session_id: str(self.get_session_history(session_id).messages)}
+        with open(f"history_chat/{session_id}.json", "w", encoding="utf-8") as history:
             json.dump(store, history, ensure_ascii=False, indent=4)
 
 

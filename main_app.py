@@ -6,10 +6,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from uuid import uuid4
 from langserve import add_routes
-from router import user,chatbot
+from router import user, chatbot
 
 from ChatbotFIT.src.base.llm_model import get_llm_model
-from ChatbotFIT.src.rag.main import build_rag_chain, InputQA, OutputQA,History_chat
+from ChatbotFIT.src.rag.main import build_rag_chain, InputQA, OutputQA, History_chat
 
 model_type = "Gemini"
 data_dir = "./data/"
@@ -32,9 +32,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
 @app.get("/")
 def router():
     return {"message": "API from FIT_IUH"}
+
 
 @app.get("/check")
 async def check():
@@ -62,6 +65,7 @@ app.include_router(chatbot.router)
 
 if __name__ == "__main__":
     import uvicorn
+
     multiprocessing.freeze_support()
 
-    uvicorn.run("main_app:app", host="0.0.0.0", port=5000,reload=True)
+    uvicorn.run("main_app:app", host="0.0.0.0", port=5000, reload=True)
