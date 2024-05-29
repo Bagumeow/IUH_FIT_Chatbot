@@ -3,6 +3,9 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 from typing import Union
 from datetime import datetime, timedelta, timezone
+import re
+from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.chat_history import InMemoryChatMessageHistory
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 import psycopg2
 import os
@@ -42,9 +45,11 @@ def create_connection():
                                 # pgbouncer=True
                                 )
         print("Database connected successfully")
+
+        return conn
+
     except:
         print("Database not connected successfully")
-    return conn
 
 def create_cursor(conn):
     return conn.cursor()
@@ -136,3 +141,24 @@ def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+def load_chat_sessionid_db(cursor,session_id:str):
+    cursor.execute("SELECT content FROM history_chat WHERE session_id = %s", (session_id,))
+    chat_history = cursor.fetchone()
+    if chat_history:
+        return chat_history
+    else:
+        return None
+
+
+def parse_messages(s):
+    pattern = r"HumanMessage\(content='(.*?)'\)|AIMessage\(content='(.*?)'\)"
+    matches = re.findall(pattern, s)
+    messages = []
+    for match in matches:
+        human_content, ai_content = match
+        if human_content:
+            messages.append(HumanMessage(content=human_content))
+        elif ai_content:
+            messages.append(AIMessage(content=ai_content))
+    return messages

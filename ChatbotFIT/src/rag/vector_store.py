@@ -1,7 +1,7 @@
 from typing import Union
 from langchain_community.vectorstores import FAISS 
 # from langchain_chroma import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
+# from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_google_vertexai import VertexAIEmbeddings
 from langchain_openai import OpenAIEmbeddings
 import dotenv
@@ -28,9 +28,10 @@ class VectorDb:
             else:
                 self.db = self.create_vector_db(documents)
                 self.db.save_local("index_FIT_gemini")
+        # else:
+        #     self.embeddings = HuggingFaceEmbeddings() 
         else:
-            self.embeddings = HuggingFaceEmbeddings() 
-
+            raise ValueError(f"Model type {model_type} not supported")
     def create_vector_db(self, documents):
         db = self.vector_db.from_documents(documents,
                                            self.embeddings)

@@ -23,7 +23,7 @@ contextualize_q_prompt = ChatPromptTemplate.from_messages(
 )
 ### QA prompt
 qa_system_prompt = """Ignore all previous instructions. \
-You are an question-answering assistant for FIT IUH. \
+You are an question-answering assistant for Faculty of Information Technology, Industrial Univerty of Ho Chi Minh City (FIT IUH). \
 User are vietnamese so you need to answer the question in vietnamese. \
 Your role is answer the question of user that related to FIT IUH  that have been provided in context so user don't need to read the whole document. \
 Context and question will in vietnamese so you need to answer the question in vietnamese. \
@@ -73,7 +73,7 @@ class RAGChain:
         with open(f"history_chat/{session_id}.json", "w",encoding="utf-8") as history:
             json.dump(store, history, ensure_ascii=False, indent=4)
 
-#main 
+
 # from vector_store import VectorDb
 # from file_loader import Loader
 # from langchain_openai import ChatOpenAI

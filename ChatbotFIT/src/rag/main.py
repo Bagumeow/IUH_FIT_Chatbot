@@ -33,32 +33,20 @@ def build_rag_chain(llm,data_dir,data_type,model_type="Gemini"):
     rag_chain = RAGChain(llm=llm,retriever=retriever)
     return rag_chain
 
-class Chatbot_FIT:
-    def __init__(self,llm,data_dir,data_type,model_type):
-        self.chain = build_rag_chain(llm=llm,
-                                     data_dir=data_dir,
-                                     data_type=data_type,
-                                     model_type=model_type)
-    
-    def get_chain(self):
-        return self.chain
-    
 
+# if __name__ == "__main__":
+#     from langchain_google_vertexai import VertexAI
+#     from langchain_openai import ChatOpenAI
+#     model_type = input('Nhập loại model bạn muốn sử dụng (GPT/Gemini): ')
+#     if model_type == "GPT":
+#         llm = ChatOpenAI(temperature=0.9, model_kwargs={"top_p":0.95}, max_tokens=1024)
+#     elif model_type == "Gemini":
+#         llm = VertexAI(model_name="gemini-1.0-pro-002",streaming=True)
+#     chain = build_rag_chain(llm=llm,data_dir="./data/",data_type="pdf",model_type=model_type)
+#     bot = chain.get_chain()
+#     input_question = input("Mời bạn nhập câu hỏi: ")
 
-
-if __name__ == "__main__":
-    from langchain_google_vertexai import VertexAI
-    from langchain_openai import ChatOpenAI
-    model_type = input('Nhập loại model bạn muốn sử dụng (GPT/Gemini): ')
-    if model_type == "GPT":
-        llm = ChatOpenAI(temperature=0.9, model_kwargs={"top_p":0.95}, max_tokens=1024)
-    elif model_type == "Gemini":
-        llm = VertexAI(model_name="gemini-1.0-pro-002",streaming=True)
-    chain = build_rag_chain(llm=llm,data_dir="./data/",data_type="pdf",model_type=model_type)
-    bot = chain.get_chain()
-    input_question = input("Mời bạn nhập câu hỏi: ")
-
-    print(bot.invoke(
-                {"input": input_question},
-                config={"configurable": {"session_id": "123"}},
-                )["answer"])
+#     print(bot.invoke(
+#                 {"input": input_question},
+#                 config={"configurable": {"session_id": "123"}},
+#                 )["answer"])
