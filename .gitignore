@@ -4,8 +4,10 @@ history_chat
 __pycache__
 .env
 *.json
+key_google
 app_streamlit.py
 streamlit_code
 ChatbotFIT/data
 ChatbotFIT/index_FIT_gemini
 ChatbotFIT/index_FIT_GPT
+utils.py
