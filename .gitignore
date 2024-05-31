@@ -6,3 +6,6 @@ __pycache__
 *.json
 app_streamlit.py
 streamlit_code
+ChatbotFIT/data
+ChatbotFIT/index_FIT_gemini
+ChatbotFIT/index_FIT_GPT

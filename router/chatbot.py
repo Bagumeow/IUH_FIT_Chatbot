@@ -5,11 +5,7 @@ from tools.tools import *
 
 # from tools import *
 os.environ["TOKENNIZERS_PARALLELISM"] = "false"
-from fastapi import FastAPI, Depends, HTTPException, status, APIRouter
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from datetime import datetime, timedelta, timezone
-from uuid import uuid4
-from langserve import add_routes
+from fastapi import  Depends, HTTPException, status, APIRouter
 
 from ChatbotFIT.src.base.llm_model import get_llm_model
 from ChatbotFIT.src.rag.main import build_rag_chain, InputQA, OutputQA, History_chat
@@ -73,7 +69,7 @@ async def chat_history(access_token: str = Depends(oauth2_scheme)):
 
 
 @router.post("/chatgemini", response_model=OutputQA)
-async def chat_gemini(input_qa: InputQA, access_token: str = Depends(oauth2_scheme)):
+async def chatgemini(input_qa: InputQA, access_token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -94,8 +90,8 @@ async def chat_gemini(input_qa: InputQA, access_token: str = Depends(oauth2_sche
 
     if not user_id:
         raise credentials_exception
-    answer = chat_gemini.invoke(
-        {"input": input_qa.question},
+    
+    answer = chat_gemini.invoke({"input": input_qa.question},
         config={
             "configurable": {"session_id": input_qa.session_id},
         },
@@ -165,7 +161,7 @@ async def chat_history_gpt(access_token: str = Depends(oauth2_scheme)):
 
 
 @router.post("/chatgpt", response_model=OutputQA)
-async def chat_gpt(input_qa: InputQA, access_token: str = Depends(oauth2_scheme)):
+async def chatgpt(input_qa: InputQA, access_token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -177,7 +173,7 @@ async def chat_gpt(input_qa: InputQA, access_token: str = Depends(oauth2_scheme)
 
     user_id, _ = get_user(conn2, token_data.email)
     # if this session id already exits
-    s_historychat = load_chat_sessionid_db(input_qa.session_id)
+    s_historychat = load_chat_sessionid_db(cursor,input_qa.session_id)
     if s_historychat:
         list_history = parse_messages(s_historychat[0])
         history = InMemoryChatMessageHistory()
@@ -204,7 +200,7 @@ async def chat_gpt(input_qa: InputQA, access_token: str = Depends(oauth2_scheme)
     columns = "session_id,user_id, model_type, content"
     if not check_session_id(conn2, input_qa.session_id):
         insert_query = f"INSERT INTO {table_name} ({columns}) VALUES (%s,%s, %s, %s)"
-        data_insert = (input_qa.session_id, user_id, "Gemini", str(content_qa))
+        data_insert = (input_qa.session_id, user_id, "GPT", str(content_qa))
         cursor.execute(insert_query, data_insert)
         conn2.commit()
         conn2.close()
